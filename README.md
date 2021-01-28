@@ -22,3 +22,10 @@ Silahkan download datanya [disini](https://drive.google.com/uc?export=download&i
 ![gqlgen](gpql.png)
 
 Live Demo [supermarket-gpql.herokuapp.com/](https://supermarket-gpql.herokuapp.com/)
+
+#### Note
+
+Setiap ada perubahan pada file ekstensi .graphqls, jalankan perintah dibawah ini untuk mengenerate ke golang
+```
+go run github.com/99designs/gqlgen generate
+```

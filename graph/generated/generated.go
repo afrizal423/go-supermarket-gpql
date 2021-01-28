@@ -61,7 +61,7 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		CariCustomerByID func(childComplexity int, id string) int
+		CariCustomerByID func(childComplexity int, limit *int, offset *int, id string) int
 		Customer         func(childComplexity int, limit *int, offset *int) int
 		Todos            func(childComplexity int) int
 	}
@@ -85,7 +85,7 @@ type MutationResolver interface {
 type QueryResolver interface {
 	Todos(ctx context.Context) ([]*model.Todo, error)
 	Customer(ctx context.Context, limit *int, offset *int) ([]*model.Customer, error)
-	CariCustomerByID(ctx context.Context, id string) ([]*model.Customer, error)
+	CariCustomerByID(ctx context.Context, limit *int, offset *int, id string) ([]*model.Customer, error)
 }
 
 type executableSchema struct {
@@ -200,7 +200,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.CariCustomerByID(childComplexity, args["id"].(string)), true
+		return e.complexity.Query.CariCustomerByID(childComplexity, args["limit"].(*int), args["offset"].(*int), args["id"].(string)), true
 
 	case "Query.customer":
 		if e.complexity.Query.Customer == nil {
@@ -369,9 +369,10 @@ type Query {
     CariCustomerByID adalah query untuk mencari data
     customer berdasarkan id.
     Query sudah didukung seperti pencarian di awal kata
-    maupun pencarian diakhir kata
+    maupun pencarian diakhir kata.
+    Silahkan gunakan parameter offset untuk paginationnya
   """
-  CariCustomerByID(id: ID!): [Customer!]!
+  CariCustomerByID(limit: Int = 10, offset: Int = 0 ,id: ID!): [Customer!]!
 }
 
 input NewTodo {
@@ -431,15 +432,33 @@ func (ec *executionContext) field_Mutation_createTodo_args(ctx context.Context, 
 func (ec *executionContext) field_Query_CariCustomerByID_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+	var arg0 *int
+	if tmp, ok := rawArgs["limit"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
+		arg0, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["id"] = arg0
+	args["limit"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["offset"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("offset"))
+		arg1, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["offset"] = arg1
+	var arg2 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg2, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg2
 	return args, nil
 }
 
@@ -1021,7 +1040,7 @@ func (ec *executionContext) _Query_CariCustomerByID(ctx context.Context, field g
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().CariCustomerByID(rctx, args["id"].(string))
+		return ec.resolvers.Query().CariCustomerByID(rctx, args["limit"].(*int), args["offset"].(*int), args["id"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)

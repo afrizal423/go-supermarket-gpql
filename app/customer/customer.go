@@ -26,10 +26,10 @@ func GetAllData(limit *int, offset *int) ([]*Customers, error) {
 	return hasil, err
 }
 
-func GetDataByID(id string) ([]*Customers, error) {
+func GetDataByID(limit *int, offset *int, id string) ([]*Customers, error) {
 	var err error
 	hasil := []*Customers{}
-	err = config.Db.Raw("select * from customer where customer_id LIKE ?", "%"+id+"%").
+	err = config.Db.Raw("select * from customer where customer_id LIKE ? limit ? offset ?", "%"+id+"%", limit, offset).
 		Scan(&hasil).Error
 	if err != nil {
 		return []*Customers{}, err

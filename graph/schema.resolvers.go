@@ -43,9 +43,9 @@ func (r *queryResolver) Customer(ctx context.Context, limit *int, offset *int) (
 	return result, nil
 }
 
-func (r *queryResolver) CariCustomerByID(ctx context.Context, id string) ([]*model.Customer, error) {
+func (r *queryResolver) CariCustomerByID(ctx context.Context, limit *int, offset *int, id string) ([]*model.Customer, error) {
 	var result []*model.Customer
-	dt, _ := customer.GetDataByID(id)
+	dt, _ := customer.GetDataByID(limit, offset, id)
 	for _, link := range dt {
 		// fmt.Println(link)
 		result = append(result,

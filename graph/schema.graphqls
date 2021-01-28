@@ -40,9 +40,10 @@ type Query {
     CariCustomerByID adalah query untuk mencari data
     customer berdasarkan id.
     Query sudah didukung seperti pencarian di awal kata
-    maupun pencarian diakhir kata
+    maupun pencarian diakhir kata.
+    Silahkan gunakan parameter offset untuk paginationnya
   """
-  CariCustomerByID(id: ID!): [Customer!]!
+  CariCustomerByID(limit: Int = 5, offset: Int = 0 ,id: ID!): [Customer!]!
 }
 
 input NewTodo {
