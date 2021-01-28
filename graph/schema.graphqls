@@ -1,0 +1,55 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+type Customer {
+  id: ID!
+  "Nama customer dengan tipe data string"
+  customer_name: String!
+  segment: String!
+  age: String!
+  country: String!
+  city: String!
+  state: String!
+  postal_code: String!
+  region: String!
+  related(limit: Int = 10, offset: Int = 0): [Customer!]!
+}
+
+
+type Todo {
+  id: ID!
+  text: String!
+  done: Boolean!
+  user: User!
+}
+
+type User {
+  id: ID!
+  name: String!
+}
+
+type Query {
+  todos: [Todo!]!
+  """
+    Query customer adalah query untuk mendapatkan semua data customer
+    silahkan gunakan parameter offset untuk paginationnya
+  """
+  customer(limit: Int = 10, offset: Int = 0): [Customer!]!
+  """
+    CariCustomerByID adalah query untuk mencari data
+    customer berdasarkan id.
+    Query sudah didukung seperti pencarian di awal kata
+    maupun pencarian diakhir kata
+  """
+  CariCustomerByID(id: ID!): [Customer!]!
+}
+
+input NewTodo {
+  text: String!
+  userId: String!
+}
+
+type Mutation {
+  createTodo(input: NewTodo!): Todo!
+}
